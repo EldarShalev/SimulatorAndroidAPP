@@ -24,7 +24,7 @@ public class DisplayJoystick extends AppCompatActivity implements Joystick.Joyst
     }
 
     public void onJoystickMoved(float xPercent, float yPercent, int source) {
-        SingeltonServer.getInstance().mainSendToSimulator(xPercent,yPercent);
+        SingeltonServer.getInstance().Send(xPercent,yPercent);
         Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
     }
 }

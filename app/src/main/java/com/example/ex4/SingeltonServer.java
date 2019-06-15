@@ -50,7 +50,7 @@ public class SingeltonServer {
 
     }
 
-    public void mainSendToSimulator(float aileronN, float elevatorN) {
+    public void Send(float aileronN, float elevatorN) {
         final String aileronS = "set /controls/flight/aileron " + Float.toString(aileronN) + "\r\n";
         final String elevatorS = "set /controls/flight/elevator " + Float.toString(elevatorN) + "\r\n";
         SendingCommand(aileronS);

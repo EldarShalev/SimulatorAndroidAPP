@@ -13,13 +13,13 @@ import android.view.View;
 
 public class Joystick extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
 
-    private float centerX;
+    private float X_Center;
 
-    private float centerY;
+    private float Y_Center;
 
-    private float baseRadius;
+    private float Radius_Base;
 
-    private float hatRadius;
+    private float Radius_tag;
 
     private JoystickListener joystickCallback;
 
@@ -48,15 +48,15 @@ public class Joystick extends SurfaceView implements SurfaceHolder.Callback, Vie
     }
 
     private void setupDimensions(){
-        centerX = getWidth() / 2;
-        centerY = getHeight() / 2;
-        baseRadius = Math.min(getWidth(), getHeight()) / 3;
-        hatRadius = Math.min(getWidth(), getHeight()) / 5;
+        X_Center = getWidth() / 2;
+        Y_Center = getHeight() / 2;
+        Radius_Base = Math.min(getWidth(), getHeight()) / 3;
+        Radius_tag = Math.min(getWidth(), getHeight()) / 5;
     }
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         setupDimensions();
-        drawJoystick(centerX,centerY);
+        drawJoystick(X_Center, Y_Center);
     }
 
     @Override
@@ -68,41 +68,36 @@ public class Joystick extends SurfaceView implements SurfaceHolder.Callback, Vie
     public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
         SingeltonServer myServer= SingeltonServer.getInstance();
         myServer.close();
-        System.out.println("Close!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
     @Override
     public boolean onTouch(View view, MotionEvent event) {
         if(view.equals(this)){
             if (event.getAction() != event.ACTION_UP){
-                float displacement = (float) Math.sqrt((Math.pow(event.getX() - centerX,2)) +
-                        Math.pow(event.getY() - centerY,2));
-                if (displacement < baseRadius){
+                float displacement = (float) Math.sqrt((Math.pow(event.getX() - X_Center,2)) +
+                        Math.pow(event.getY() - Y_Center,2));
+                if (displacement < Radius_Base){
                     drawJoystick(event.getX(), event.getY());
-                    joystickCallback.onJoystickMoved((centerX - event.getX()) / baseRadius,
-                            (event.getY() - centerY) / baseRadius, getId());
+                    joystickCallback.onJoystickMoved((X_Center - event.getX()) / Radius_Base,
+                            (event.getY() - Y_Center) / Radius_Base, getId());
                 }
                 else {
-                    float ratio = baseRadius / displacement;
-                    float constrainedX = centerX + (event.getX() - centerX) * ratio;
-                    float constrainedY = centerY + (event.getY() - centerY) * ratio;
+                    float ratio = Radius_Base / displacement;
+                    float constrainedX = X_Center + (event.getX() - X_Center) * ratio;
+                    float constrainedY = Y_Center + (event.getY() - Y_Center) * ratio;
                     drawJoystick(constrainedX,constrainedY);
-                    joystickCallback.onJoystickMoved((constrainedX - centerX) / baseRadius,
-                            (centerY - constrainedY) / baseRadius, getId());
+                    joystickCallback.onJoystickMoved((constrainedX - X_Center) / Radius_Base,
+                            (Y_Center - constrainedY) / Radius_Base, getId());
                 }
             } else{
-                drawJoystick(centerX,centerY);
+                drawJoystick(X_Center, Y_Center);
                 joystickCallback.onJoystickMoved(0,0,getId());
             }
         }
-
         return true;
     }
-
     public interface JoystickListener
-
     {
-
         void onJoystickMoved(float xPercent, float yPercent, int source);
 
     }
@@ -113,9 +108,9 @@ public class Joystick extends SurfaceView implements SurfaceHolder.Callback, Vie
             Paint colors = new Paint();
             drawCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
             colors.setARGB(255,50,50,50);
-            drawCanvas.drawCircle(centerX,centerY,baseRadius,colors);
+            drawCanvas.drawCircle(X_Center, Y_Center, Radius_Base,colors);
             colors.setARGB(255,0,0,255);
-            drawCanvas.drawCircle(x,y,hatRadius,colors);
+            drawCanvas.drawCircle(x,y, Radius_tag,colors);
             getHolder().unlockCanvasAndPost(drawCanvas);
         }
     }
